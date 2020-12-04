@@ -4,8 +4,10 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
-group 'org.example'
 version '1.0-SNAPSHOT'
+
+sourceSets.main.resources.srcDirs("src/main/java").includes.addAll(["**/*.fxml", "**/*.css","**/*.png","**/*.jpg"])
+sourceSets.main.resources.srcDirs("src/main/resources").includes.addAll(["**/*.*"])
 
 repositories {
     mavenCentral()
@@ -14,6 +16,7 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.1.2' //JDBC MariaDB
 }
 
 test {
@@ -22,7 +25,7 @@ test {
 
 javafx {
     version = "15.0.1"
-    modules = [ 'javafx.controls' ]
+    modules = [ 'javafx.controls','javafx.fxml' ]
 }
 
 mainClassName = 'org.example.App'
