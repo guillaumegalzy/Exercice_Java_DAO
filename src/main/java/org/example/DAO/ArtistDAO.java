@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import org.example.Artist.Artist;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ArtistDAO extends DAO{
@@ -29,7 +28,7 @@ public class ArtistDAO extends DAO{
         
         // Exécute la requête
             insert.execute();
-            ;
+
     }
 
     public void Update(Artist artist){
@@ -57,6 +56,9 @@ public class ArtistDAO extends DAO{
         // On se positionne sur le premier résultat
             oneByName.first();
 
+        // Ferme la requête
+            getOneByName.close();
+
         return new Artist(
                 oneByName.getInt(1),
                 oneByName.getString(2),
@@ -71,10 +73,10 @@ public class ArtistDAO extends DAO{
      */
     public List<Artist> List() throws SQLException {
         // Création de la requête de recherche de l'ensemble des disques
-        Statement getAll = con.createStatement();
+            Statement getAll = con.createStatement();
 
         // Exécute la requête et récupération du résultat
-        ResultSet allArtist = getAll.executeQuery("SELECT * FROM artist ORDER BY artist_name");
+            ResultSet allArtist = getAll.executeQuery("SELECT * FROM artist ORDER BY artist_name");
 
         while (allArtist.next()) {
             repoArtist.add(new Artist(
@@ -83,6 +85,9 @@ public class ArtistDAO extends DAO{
                     allArtist.getString(3)
                     ));
         }
+        // Ferme la requête
+            getAll.close();
+
         return repoArtist;
     }
 
@@ -94,15 +99,17 @@ public class ArtistDAO extends DAO{
     public int LastID() throws SQLException {
         int lastID = 0;
         // Création de la requête de recherche du dernier ID d'artiste
-            Statement getAll = con.createStatement();
+            Statement getLastId = con.createStatement();
 
         // Exécute la requête et récupération du résultat
-            ResultSet allDisc = getAll.executeQuery("SELECT MAX (artist_id) from artist");
+            ResultSet allDisc = getLastId.executeQuery("SELECT MAX (artist_id) from artist");
 
             allDisc.first();
 
             lastID = allDisc.getInt(1);
 
+        // Ferme la requête
+            getLastId.close();
         return lastID;
     }
 

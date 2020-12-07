@@ -33,6 +33,9 @@ public class DiscDAO extends DAO{
 
         // Exécute la requête d'ajout
             insert.execute();
+
+        // Ferme la requête
+            insert.close();
     }
 
     public void Update(Disc oldDisc, Disc newDisc) throws SQLException {
@@ -55,6 +58,9 @@ public class DiscDAO extends DAO{
 
         // Exécute la requête
             maj.execute();
+
+        // Ferme la requête
+            maj.close();
     }
 
     public void Delete(Disc disc) throws SQLException {
@@ -66,20 +72,26 @@ public class DiscDAO extends DAO{
 
         // Exécute la requête
         delOne.execute();
+
+        // Ferme la requête
+        delOne.close();
     }
 
     public Disc Find(int disc_id) throws SQLException {
         // Création de la requête préparée de recherche du disque
-            PreparedStatement stmtSearch = con.prepareStatement("SELECT disc.*,artist_name FROM disc join artist ON disc.artist_id = artist.artist_id WHERE disc_id=?");
+            PreparedStatement findOneByID = con.prepareStatement("SELECT disc.*,artist_name FROM disc join artist ON disc.artist_id = artist.artist_id WHERE disc_id=?");
 
         // Définit le critère de recherche pour la requête préparée
-            stmtSearch.setInt(1, disc_id);
+            findOneByID.setInt(1, disc_id);
 
         // Exécute la requête et récupération du résultat
-            ResultSet result = stmtSearch.executeQuery();
+            ResultSet result = findOneByID.executeQuery();
 
         // On se positionne au premier emplacement du ResultSet
             result.first();
+
+        // Ferme la requête
+            findOneByID.close();
 
         // Création du disque en utilisant le constructeur spécifique renseignant l'ensemble des membres
         return new Disc(
@@ -120,6 +132,10 @@ public class DiscDAO extends DAO{
                     allDisc.getString(9)
             ));
         }
+
+        // Ferme la requête
+            getAll.close();
+
         return repoDisc;
     }
 
