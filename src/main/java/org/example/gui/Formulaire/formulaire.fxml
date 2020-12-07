@@ -1,19 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.InnerShadow?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
 <AnchorPane fx:id="AnchorPane" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.gui.Formulaire.FormulaireControlleur">
    <children>
@@ -78,7 +69,7 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <ComboBox fx:id="comboArtist" onAction="#saisieManuelle" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <ComboBox fx:id="comboArtist" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                         <TextField fx:id="inputArtist" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                      </children>
                      <HBox.margin>
@@ -90,7 +81,7 @@
                         <Insets />
                      </HBox.margin>
                      <image>
-                        <Image url="@../../../../../resources/img/Initials%20BB.jpeg" />
+                        <Image url="@../../../../../resources/img/Initials BB.jpeg" />
                      </image>
                      <effect>
                         <InnerShadow />
@@ -104,7 +95,7 @@
             <HBox alignment="CENTER" spacing="30.0">
                <children>
                   <Button fx:id="btnAccept" mnemonicParsing="false" onAction="#btn_Click" text="Accepter" />
-                  <Button fx:id="btnCancel" cancelButton="true" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#retourHome" text="Annuler" />
+                  <Button fx:id="btnCancel" cancelButton="true" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#GoToHome" text="Annuler" />
                </children>
             </HBox>
             <Button fx:id="btnLoad" mnemonicParsing="false" onAction="#getData" text="Button" />

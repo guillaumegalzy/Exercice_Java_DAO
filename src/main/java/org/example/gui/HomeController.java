@@ -4,21 +4,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
 import org.example.DAO.DiscDAO;
-import org.example.Data.Data;
-import org.example.Data.DataHolder;
 import org.example.Disc.Disc;
-import java.io.IOException;
+import org.example.Service.SceneHandler;
+
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -38,10 +32,13 @@ public class HomeController implements Initializable{
     public javafx.scene.layout.AnchorPane AnchorPane;
 
     public DiscDAO repodisc = new DiscDAO();
-    public List<Object> dataSend = new ArrayList<>(); // Données qui seront transmises par ce controlleur au controlleur du formulaire
+    public static List<Object> dataSend = new ArrayList<>(); // Données qui seront stockées par ce controlleur et utilisé par le controlleur du formulaire
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Vide les données envoyées
+            dataSend.clear();
+
         // Rend le tableau non éditable
             tableau.setEditable(false);
 
@@ -54,7 +51,7 @@ public class HomeController implements Initializable{
                     col_Disc.setCellValueFactory(new PropertyValueFactory<>("disc_title"));
                     col_Artist.setCellValueFactory(new PropertyValueFactory<>("artist_name"));
 
-                // Ajout des éléments du repo en tant que données du tableau
+                // Ajout les éléments du repo en tant que données du tableau
                 tableau.setItems(listDisc);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
@@ -70,28 +67,28 @@ public class HomeController implements Initializable{
                 // Ajout d'un disque à la base de données
                 case "btnAjouter":
                     // Informe le controlleur du formulaire que l'on veut effectuer un ajout
-                        this.dataSend.add("Ajout"); //Stockage de l'opération demandée
-                        sendData(actionEvent,dataSend);
+                        dataSend.add("Ajout"); //Stockage de l'opération demandée
+                        GoToForm(actionEvent);
                     break;
 
                 // Modification d'un disque existant
                 case "btnModifier":
                     // Informe le controlleur du formulaire que l'on veut effectuer une modification
-                        this.dataSend.add("Modification"); //Stockage de l'opération demandée
-                        this.dataSend.add(tableau.getSelectionModel().getSelectedItem()); //Stockage du disque concerné
-                        sendData(actionEvent,dataSend);
+                        dataSend.add("Modification"); //Stockage de l'opération demandée
+                        dataSend.add(tableau.getSelectionModel().getSelectedItem()); //Stockage du disque concerné
+                        GoToForm(actionEvent);
                     break;
 
                 // Suppression d'un disque à la base de données
                 case "btnSupprimer":
                     // Récupération de l'ID du disque à supprimer
-                    Disc disc = tableau.getSelectionModel().getSelectedItem();
+                        Disc disc = tableau.getSelectionModel().getSelectedItem();
 
                     // Le supprime de la BDD
-                    this.repodisc.Delete(disc);
+                        this.repodisc.Delete(disc);
 
                     // Le supprime de l'observableList
-                    listDisc.remove(disc);
+                        listDisc.remove(disc);
                     break;
 
                 default:break;
@@ -99,29 +96,12 @@ public class HomeController implements Initializable{
     }
 
     /**
-     * Stocke une variable UserData qui pourra être récupérée par le controlleur du formulaire pour savoir comment gérer la demande de l'utilisateur
-     * @param dataSend Liste comprennant les paramètres sous forme d'Objetc. Ces paramètres seront utilisés par le formulaire
+     * Change de scène - Passe au formulaire
+     * @param actionEvent Evemement déclenchant l'action
      */
-    private void sendData(ActionEvent actionEvent,List<Object> dataSend){
-        // Step 1
-        Data data = new Data();
-        data.setDatas(dataSend);
-        Node node = (Node) actionEvent.getSource();
-        Stage stage = (Stage) node.getScene().getWindow();
-        stage.close();
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/org/example/gui/Formulaire/formulaire.fxml"));
-            // Step 2
-            DataHolder holder = DataHolder.getDataStock();
-            // Step 3
-            holder.setData(data);
-            // Step 4
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            System.err.printf("Error: %s%n", e.getMessage());
-        }
-        System.out.println("Données stockées " + data.getDatas());
+    private void GoToForm(ActionEvent actionEvent){
+        // Retour à l'écran principal via le service de changement de scene
+            SceneHandler sceneHandler = new SceneHandler();
+            sceneHandler.setScene(actionEvent, "Formulaire/formulaire");
     }
 }

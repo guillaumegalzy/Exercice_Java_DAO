@@ -4,23 +4,26 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import org.example.Artist.Artist;
 import org.example.DAO.ArtistDAO;
 import org.example.DAO.DiscDAO;
-import org.example.Data.Data;
-import org.example.Data.DataHolder;
 import org.example.Disc.Disc;
-import java.io.IOException;
+import org.example.Service.SceneHandler;
+import org.example.gui.HomeController;
+
+import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +48,9 @@ public class FormulaireControlleur implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Vide les précédentes données récupérées
+            dataReceive.clear();
+
         // Récupération des artistes présents dans la BDD et ajout dans la combobox
             try {
                 listArtist.add("Ajouter un nouvel artiste");
@@ -59,6 +65,37 @@ public class FormulaireControlleur implements Initializable {
         // Remplissage des champs s'il s'agit d'une modification
             Image test = new Image("img/Fugazi.jpeg");
             ImgDisc.setImage(test);
+
+        // Récupération des données stockées par le controlleur principal
+            getData();
+
+        // Ajout gestionnaire d'écoute sur la combobox, affiche l'inputArtist si la valeur sélectionnée est "Ajouter un nouvel artiste"
+            this.comboArtist.valueProperty().addListener((observable, oldValue, newValue) ->
+                    inputArtist.setVisible(newValue.equals("Ajouter un nouvel artiste")));
+
+        // Ajout gestionnaire d'écoute sur l'image, pour permettre sa modification
+            if(dataReceive.get(0).equals("Modification")) {
+                ImgDisc.setOnMouseClicked(event -> {
+                    // Création et paramétrage d'un filechooser
+                        FileChooser fileChooser = new FileChooser();
+                        fileChooser.setTitle("Sélectionner une image");
+                        fileChooser.getExtensionFilters().addAll( //Extensions autorisées
+                                new FileChooser.ExtensionFilter("Image (.jpg, .jpeg, .png)", "*.jpeg", "*.jpg", "*.png")
+                        );
+
+                    //Chemin d'accès au fichier de resources du projet pour paramétrage du chemin d'accès par défaut
+                        String directory = System.getProperty("user.dir");
+                        Path path = Paths.get(directory + "/src/main/resources/img");
+                        fileChooser.setInitialDirectory(new File(String.valueOf(path)));
+
+                    // Ouverture de la fenêtre de dialogue et récupération de l'image choisie
+                        File selectedFile = fileChooser.showOpenDialog(ImgDisc.getScene().getWindow());
+
+                    // Modification de l'image prévisualisée
+                        Image newImage = new Image("/img/" + selectedFile.getName());
+                        ImgDisc.setImage(newImage);
+                });
+            }
     }
 
     /**
@@ -68,20 +105,20 @@ public class FormulaireControlleur implements Initializable {
      */
     public void btn_Click(ActionEvent actionEvent) throws SQLException {
         // Vérification des champs
-        verify();
+            verify();
 
         // Initialisation de la variable qui contiendra le nom de l'artiste, égal au texte de la combobox par défaut
-        String artistName = this.comboArtist.getSelectionModel().getSelectedItem();
+            String artistName = this.comboArtist.getSelectionModel().getSelectedItem();
 
         // Ajout de l'artiste si besoin et récupération de son nom pour l'ajouter au disque par la suite
-        if (this.inputArtist.isVisible()){
-            Artist newArtist = new Artist(repoArtist.LastID()+1,this.inputArtist.getText(),"");
-            repoArtist.Insert(newArtist);
-            artistName = repoArtist.FindByName(newArtist.getArtist_name()).getArtist_name();
-        }
+            if (this.inputArtist.isVisible()){
+                Artist newArtist = new Artist(repoArtist.LastID()+1,this.inputArtist.getText(),"");
+                repoArtist.Insert(newArtist);
+                artistName = repoArtist.FindByName(newArtist.getArtist_name()).getArtist_name();
+            }
 
         // Création du nouveau disque à partir des champs renseignés
-        Disc newDisc = new Disc(
+            Disc newDisc = new Disc(
                 this.inputTitre.getText(),
                 Integer.parseInt(this.inputAnnee.getText()),
                 this.ImgDisc.getImage().getUrl(),
@@ -98,7 +135,11 @@ public class FormulaireControlleur implements Initializable {
                         repoDisc.Insert(newDisc);
 
                     // Message de confirmation
-                        System.out.println("Ajout effectué");
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("Validation");
+                        alert.setContentText("L'ajout a bien \u00E9t\u00E9 effectu\u00E9");
+                        alert.showAndWait();
+
                     break;
 
                 case "Modification":
@@ -107,53 +148,43 @@ public class FormulaireControlleur implements Initializable {
                         repoDisc.Update(oldDisc,newDisc);
 
                     // Message de confirmation
-                        System.out.println("Modification effectué");
+                        alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("Modification effectu\u00E9");
+                        alert.setContentText("La modification a bien \u00E9t\u00E9 effectu\u00E9e");
+                        alert.showAndWait();
+
                     break;
 
                 default: break;
             }
 
         // Retour au menu
-            retourHome(actionEvent);
-
+            GoToHome(actionEvent);
     }
 
     /**
-     * Changement de fenêtre - Retour à l'écran principal
+     * Changement de scene - Retour à l'écran principal
      * @param actionEvent Action déclenché par appui sur les bouton 'Accepter' ou 'Annuler'
      */
-    public void retourHome(ActionEvent actionEvent) {
-        // Vide les données stockées
-            this.dataReceive.clear();
-
-        // Retour à l'écran principal
-            Scene sceneHome = ((Button) actionEvent.getSource()).getParent().getScene();
-            Parent homeRoot = sceneHome.getRoot();
-            try {
-                homeRoot = FXMLLoader.load(getClass().getResource("/org/example/gui/home.fxml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            sceneHome.setRoot(homeRoot);
+    public void GoToHome(ActionEvent actionEvent) {
+        // Retour à l'écran principal via le service de changement de scene
+            SceneHandler sceneHandler = new SceneHandler();
+            sceneHandler.setScene(actionEvent, "home");
     }
 
     /**
      * Fonction vérifiant la validé des champs du formulaire avant requête d'ajout ou de modification
      */
     public void verify(){
-        System.out.println("vérification");
 
     }
 
     /**
-     * Récupère les UserDatas stockées par le controlleur principal et lié à la stage principale
+     * Récupère les datas stockées par le controlleur principal
      */
     public void getData(){
         // Récupération de la stage principale à partir du tableau
-            DataHolder holder = DataHolder.getDataStock();
-            Data data = holder.getData();
-            dataReceive.addAll(data.getDatas());
-            System.out.println("data Receive : " + dataReceive);
+            dataReceive.addAll(HomeController.dataSend);
 
         // S'il s'agit d'une modification
             if(this.dataReceive.get(0).equals("Modification")){
@@ -168,12 +199,5 @@ public class FormulaireControlleur implements Initializable {
                     this.ImgDisc.setImage(new Image("img/"+disc.getDisc_picture()));
                     this.comboArtist.getSelectionModel().select(disc.getArtist_name());
             }
-    }
-
-    /**
-     * Active l'affichage de l'input pour la saisie d'un nouvel artiste sur sélection de l'option "Ajouter un nouvel artiste"
-     */
-    public void saisieManuelle() {
-        this.inputArtist.setVisible(this.comboArtist.getSelectionModel().getSelectedItem().equals("Ajouter un nouvel artiste"));
     }
 }

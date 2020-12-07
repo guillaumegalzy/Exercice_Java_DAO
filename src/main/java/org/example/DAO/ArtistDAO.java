@@ -2,7 +2,6 @@ package org.example.DAO;
 
 import javafx.collections.FXCollections;
 import org.example.Artist.Artist;
-
 import java.sql.*;
 import java.util.List;
 
@@ -28,6 +27,8 @@ public class ArtistDAO extends DAO{
         
         // Exécute la requête
             insert.execute();
+
+            insert.close();
 
     }
 
