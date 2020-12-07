@@ -13,12 +13,12 @@ public class App extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
-        stage.setTitle("DAO");
-        stage.centerOnScreen();
-        stage.setResizable(true);
+    public void start(Stage primarystage) {
+        primarystage.setTitle("DAO");
+        primarystage.centerOnScreen();
+        primarystage.setResizable(true);
 
-        // Premier node
+        // Premier parent
         Parent home = null;
         try {
             home = FXMLLoader.load(getClass().getResource("/org/example/gui/home.fxml"));
@@ -26,8 +26,7 @@ public class App extends Application {
             e.printStackTrace();
         }
         Scene scenehome = new Scene(home);
-        stage.setScene(scenehome);
-
-        stage.show();
+        primarystage.setScene(scenehome);
+        primarystage.show();
     }
 }

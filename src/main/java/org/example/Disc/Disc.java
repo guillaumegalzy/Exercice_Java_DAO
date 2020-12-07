@@ -7,14 +7,11 @@ public class Disc {
     private String disc_picture;
     private String disc_label;
     private String disc_genre;
-    private int disc_price;
+    private Double disc_price;
     private int artist_id;
     private String artist_name;
 
-    public Disc() {
-    }
-
-    public Disc(int disc_id, String disc_title, int disc_year, String disc_picture, String disc_label, String disc_genre, int disc_price, int artist_id, String artist_name) {
+    public Disc(int disc_id, String disc_title, int disc_year, String disc_picture, String disc_label, String disc_genre, Double disc_price, int artist_id, String artist_name) {
         this.disc_id = disc_id;
         this.disc_title = disc_title;
         this.disc_year = disc_year;
@@ -26,19 +23,7 @@ public class Disc {
         this.artist_name = artist_name;
     }
 
-    public Disc(int disc_id, String disc_title, int disc_year, String disc_picture, String disc_label, String disc_genre, int disc_price, int artist_id) {
-        this.disc_id = disc_id;
-        this.disc_title = disc_title;
-        this.disc_year = disc_year;
-        this.disc_picture = disc_picture;
-        this.disc_label = disc_label;
-        this.disc_genre = disc_genre;
-        this.disc_price = disc_price;
-        this.artist_id = artist_id;
-    }
-
-    public Disc(int disc_id, String disc_title, int disc_year, String disc_picture, String disc_label, String disc_genre, int disc_price, String artist_name) {
-        this.disc_id = disc_id;
+    public Disc( String disc_title, int disc_year, String disc_picture, String disc_label, String disc_genre, Double disc_price, String artist_name) {
         this.disc_title = disc_title;
         this.disc_year = disc_year;
         this.disc_picture = disc_picture;
@@ -104,11 +89,11 @@ public class Disc {
         this.disc_genre = disc_genre;
     }
 
-    public int getDisc_price() {
+    public Double getDisc_price() {
         return disc_price;
     }
 
-    public void setDisc_price(int disc_price) {
+    public void setDisc_price(Double disc_price) {
         this.disc_price = disc_price;
     }
 

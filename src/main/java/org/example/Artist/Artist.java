@@ -5,7 +5,7 @@ public class Artist {
     private String artist_name;
     private String artist_url;
 
-    public Artist() {
+    public Artist(String artist_name, String artist_url) {
     }
 
     public Artist(int artist_id, String artist_name, String artist_url) {
