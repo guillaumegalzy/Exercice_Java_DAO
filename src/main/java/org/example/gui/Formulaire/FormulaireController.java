@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class FormulaireControlleur implements Initializable {
+public class FormulaireController implements Initializable {
     @FXML
     public Button btnAccept,btnCancel,btnLoad;
     @FXML
