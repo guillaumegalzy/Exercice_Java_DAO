@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
 
 public class FormulaireController implements Initializable {
     @FXML
-    public Button btnAccept,btnCancel,btnLoad;
+    public Button btnAccept,btnCancel;
     @FXML
     public ImageView ImgDisc;
     @FXML
